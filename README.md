@@ -116,12 +116,22 @@ The app features a secure Login Portal with session management, role enforcement
 | **Admin** | Central Attendance Monitoring Cell | `attendance.stme@nmims.edu` | `Attendance@2026` |
 | **Admin** | Dr. Anshuman Jaswal (Director) | `director.stme@nmims.edu` | `Director@2026` |
 
-### 👨‍🏫 2. Faculty Accounts (Sample Featured Faculty)
+### 👨‍🏫 2. Faculty Accounts (Official STME Faculty List)
 | Faculty Code | Faculty Name & Designation | Official Email | Password |
 |--------------|----------------------------|----------------|----------|
 | **VK** | Dr. Vikas Khare (Associate Dean & Prof) | `vikas.khare@nmims.edu` | `Faculty@VK2026` |
 | **NA** | Dr. Nidhhi Asthana (Assoc Prof & TT Coord) | `nidhhi.asthana@nmims.edu` | `Faculty@NA2026` |
-| **MJ** | Mr. Lokesh Gupta (Asst Prof, Physics) | `lokesh.gupta@nmims.edu` | `Faculty@MJ2026` |
+| **MJ** | Dr. Munendra Jain (Asst Prof, Physics) | `munendra.jain@nmims.edu` | `Faculty@MJ2026` |
+| **DG** | Dr. Divya Gautam (Asst Prof, Computer Engg) | `divya.gautam@nmims.edu` | `Faculty@DG2026` |
+| **DS** | Dr. Dharmendra Sharma (Asst Prof, Computer Engg) | `dharmendra.sharma@nmims.edu` | `Faculty@DS2026` |
+| **AC** | Anita Chalka (Asst Prof, Humanities) | `anita.chalka@nmims.edu` | `Faculty@AC2026` |
+| **HG** | Dr. Hemant Gianey (Asst Prof, Computer Engg) | `hemant.gianey@nmims.edu` | `Faculty@HG2026` |
+| **MG** | Dr. Mahipal Gadhavi (Asst Prof, Humanities) | `mahipal.gadhavi@nmims.edu` | `Faculty@MG2026` |
+| **CP** | Chintan Patel (Asst Prof, Computer Engg) | `chintan.patel@nmims.edu` | `Faculty@CP2026` |
+| **GP** | Dr. Gauarv Paliwal (Asst Prof, Computer Engg) | `gaurav.paliwal@nmims.edu` | `Faculty@GP2026` |
+| **RD** | Dr. Ritesh Dhanare (Asst Prof, Computer Engg) | `ritesh.dhanare@nmims.edu` | `Faculty@RD2026` |
+| **PST** | Dr. Praveen Singh Thakur (Asst Prof, Computer Engg) | `praveen.thakur@nmims.edu` | `Faculty@PST2026` |
+| **RGM** | Dr. Raj Gaurav Mishra (Asst Prof, Computer Engg) | `rajgaurav.mishra@nmims.edu` | `Faculty@RGM2026` |
 | **VJ** | Dr. Vikas Jain (Assoc Prof & TT Coord) | `vikas.jain@nmims.edu` | `Faculty@VJ2026` |
 | **AR** | Dr. Ankur Ratmele (Assoc Prof & TT Coord) | `ankur.ratmele@nmims.edu` | `Faculty@AR2026` |
 *(All 33 faculty codes from the official timetable are seeded with pattern: `Faculty@<CODE>2026`)*

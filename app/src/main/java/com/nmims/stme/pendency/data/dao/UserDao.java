@@ -36,4 +36,7 @@ public interface UserDao {
 
     @Query("SELECT COUNT(*) FROM users")
     int getUserCount();
+
+    @Query("DELETE FROM users WHERE associatedFacultyCode IS NOT NULL")
+    void deleteAllFacultyUsers();
 }

@@ -257,7 +257,17 @@ const server = http.createServer((req, res) => {
             featuredFaculty: [
                 { email: "vikas.khare@nmims.edu", code: "VK", role: "FACULTY", name: "Dr. Vikas Khare (Associate Dean)", pass: "Faculty@VK2026" },
                 { email: "nidhhi.asthana@nmims.edu", code: "NA", role: "FACULTY", name: "Dr. Nidhhi Asthana", pass: "Faculty@NA2026" },
-                { email: "lokesh.gupta@nmims.edu", code: "MJ", role: "FACULTY", name: "Mr. Lokesh Gupta", pass: "Faculty@MJ2026" }
+                { email: "munendra.jain@nmims.edu", code: "MJ", role: "FACULTY", name: "Dr. Munendra Jain", pass: "Faculty@MJ2026" },
+                { email: "dharmendra.sharma@nmims.edu", code: "DS", role: "FACULTY", name: "Dr. Dharmendra Sharma", pass: "Faculty@DS2026" },
+                { email: "divya.gautam@nmims.edu", code: "DG", role: "FACULTY", name: "Dr. Divya Gautam", pass: "Faculty@DG2026" },
+                { email: "anita.chalka@nmims.edu", code: "AC", role: "FACULTY", name: "Anita Chalka", pass: "Faculty@AC2026" },
+                { email: "hemant.gianey@nmims.edu", code: "HG", role: "FACULTY", name: "Dr. Hemant Gianey", pass: "Faculty@HG2026" },
+                { email: "ritesh.dhanare@nmims.edu", code: "RD", role: "FACULTY", name: "Dr. Ritesh Dhanare", pass: "Faculty@RD2026" },
+                { email: "praveen.thakur@nmims.edu", code: "PST", role: "FACULTY", name: "Dr. Praveen Singh Thakur", pass: "Faculty@PST2026" },
+                { email: "rajgaurav.mishra@nmims.edu", code: "RGM", role: "FACULTY", name: "Dr. Raj Gaurav Mishra", pass: "Faculty@RGM2026" },
+                { email: "mahipal.gadhavi@nmims.edu", code: "MG", role: "FACULTY", name: "Dr. Mahipal Gadhavi", pass: "Faculty@MG2026" },
+                { email: "chintan.patel@nmims.edu", code: "CP", role: "FACULTY", name: "Chintan Patel", pass: "Faculty@CP2026" },
+                { email: "gaurav.paliwal@nmims.edu", code: "GP", role: "FACULTY", name: "Dr. Gauarv Paliwal", pass: "Faculty@GP2026" }
             ],
             featuredCRs: [
                 { email: "aarav.sharma@nmims.edu", classId: "BTECH_CE_S1_A", role: "CR", name: "Aarav Sharma", pass: "CR@CES1A" },

@@ -14,47 +14,12 @@ public class DatabaseInitializer {
 
     public static void seedDatabase(AppDatabase db) {
         if (db.classDao().getAllClassesSync().size() > 0) {
-            if (db.userDao().getUserCount() == 0) {
-                seedUsersOnly(db);
-            }
-            return; // Already initialized
+            updateFacultiesAndUsers(db);
+            return; // Already initialized, keep faculties & users synchronized
         }
 
         // 1. Insert Faculties (with official STME codes & full names from timetable headers)
-        List<FacultyEntity> faculties = new ArrayList<>();
-        faculties.add(new FacultyEntity("NA", "Dr. Nidhhi Asthana", "Associate Professor & TT Coordinator", "Computer Engineering", "nidhhi.asthana@nmims.edu"));
-        faculties.add(new FacultyEntity("AR", "Dr. Ankur Ratmele", "Associate Professor & TT Coordinator", "Computer Engineering", "ankur.ratmele@nmims.edu"));
-        faculties.add(new FacultyEntity("VJ", "Dr. Vikas Jain", "Associate Professor & TT Coordinator", "Computer Engineering", "vikas.jain@nmims.edu"));
-        faculties.add(new FacultyEntity("VK", "Dr. Vikas Khare", "Associate Dean and Professor", "STME NMIMS", "vikas.khare@nmims.edu"));
-        faculties.add(new FacultyEntity("JG", "Dr. Jyoti Gautam", "Assistant Professor", "Computer Engineering", "jyoti.gautam@nmims.edu"));
-        faculties.add(new FacultyEntity("SS", "Dr. Shruti Sharma", "Assistant Professor", "Computer Engineering", "shruti.sharma@nmims.edu"));
-        faculties.add(new FacultyEntity("JP", "Dr. Jitendra Patel", "Assistant Professor", "Management & Humanities", "jitendra.patel@nmims.edu"));
-        faculties.add(new FacultyEntity("MJ", "Mr. Lokesh Gupta", "Assistant Professor", "Applied Sciences / Physics", "lokesh.gupta@nmims.edu"));
-        faculties.add(new FacultyEntity("PS", "Dr. Pushpanjay Singh", "Assistant Professor", "Mechanical Engineering", "pushpanjay.singh@nmims.edu"));
-        faculties.add(new FacultyEntity("AC", "Dr. Mahipal Gadhavi", "Assistant Professor", "Humanities / IKS", "mahipal.gadhavi@nmims.edu"));
-        faculties.add(new FacultyEntity("SV", "Dr. Suman Verma", "Assistant Professor", "Life Sciences / EVS", "suman.verma@nmims.edu"));
-        faculties.add(new FacultyEntity("HG", "Mr. Harshanand Golghate", "Assistant Professor", "Electronics Engineering", "harshanand.golghate@nmims.edu"));
-        faculties.add(new FacultyEntity("DG", "Dr. Deepak Goyal", "Assistant Professor", "Computer Engineering", "deepak.goyal@nmims.edu"));
-        faculties.add(new FacultyEntity("NiG", "Prof. Nidhi Gour", "Assistant Professor", "Computer Engineering", "nidhi.gour@nmims.edu"));
-        faculties.add(new FacultyEntity("DS", "Dr. Deepak Sharma", "Assistant Professor", "Computer Engineering", "deepak.sharma@nmims.edu"));
-        faculties.add(new FacultyEntity("RD", "Prof. R. Doshi", "Assistant Professor", "Computer Engineering", "r.doshi@nmims.edu"));
-        faculties.add(new FacultyEntity("SO", "Prof. S. Oberoi", "Assistant Professor", "Electrical Engineering", "s.oberoi@nmims.edu"));
-        faculties.add(new FacultyEntity("AP", "Prof. Aniket Patil", "Assistant Professor", "Electrical & Electronics", "aniket.patil@nmims.edu"));
-        faculties.add(new FacultyEntity("RR", "Prof. R. Rathore", "Assistant Professor", "Design Engineering", "r.rathore@nmims.edu"));
-        faculties.add(new FacultyEntity("PST", "Prof. P. S. Tomar", "Assistant Professor", "Computer Engineering", "ps.tomar@nmims.edu"));
-        faculties.add(new FacultyEntity("PM", "Prof. P. Mishra", "Assistant Professor", "Data Science", "p.mishra@nmims.edu"));
-        faculties.add(new FacultyEntity("KJ", "Prof. K. Joshi", "Assistant Professor", "Data Science", "k.joshi@nmims.edu"));
-        faculties.add(new FacultyEntity("RGM", "Prof. R. G. Malviya", "Assistant Professor", "Computer Engineering", "rg.malviya@nmims.edu"));
-        faculties.add(new FacultyEntity("GP", "Prof. G. Pandey", "Assistant Professor", "Computer Engineering", "g.pandey@nmims.edu"));
-        faculties.add(new FacultyEntity("MB", "Prof. M. Bhalerao", "Assistant Professor", "Management Studies", "m.bhalerao@nmims.edu"));
-        faculties.add(new FacultyEntity("SJ", "Prof. S. Jain", "Assistant Professor", "Computer Engineering", "s.jain@nmims.edu"));
-        faculties.add(new FacultyEntity("ADS", "Dr. Ankur Ratmele & Dr. Vikas Jain", "Associate Professors", "Computer Engineering", "tt.admin@nmims.edu"));
-        faculties.add(new FacultyEntity("NG", "Dr. Neelam Gupta", "Associate Professor", "Mathematics", "neelam.gupta@nmims.edu"));
-        faculties.add(new FacultyEntity("AS", "Dr. Ankur Sharma", "Assistant Professor", "Statistics & Mathematics", "ankur.sharma@nmims.edu"));
-        faculties.add(new FacultyEntity("MG", "Prof. M. Gandhi", "Assistant Professor", "Management Studies", "m.gandhi@nmims.edu"));
-        faculties.add(new FacultyEntity("SG", "Prof. S. Gupta", "Assistant Professor", "Computer Engineering", "s.gupta@nmims.edu"));
-        faculties.add(new FacultyEntity("AM", "Prof. A. Mishra", "Assistant Professor", "Applied Sciences", "a.mishra@nmims.edu"));
-        faculties.add(new FacultyEntity("CP", "Prof. C. Patidar", "Assistant Professor", "Electronics", "c.patidar@nmims.edu"));
+        List<FacultyEntity> faculties = getMasterFaculties();
         db.facultyDao().insertAll(faculties);
 
         // 2. Insert Classes (All 18 Timetable Sections from Document with 2 Appointed CRs each)
@@ -493,13 +458,59 @@ public class DatabaseInitializer {
         slots.add(new TimetableSlotEntity("BTECH_AIDS_S7", "Thurs", "11:50", "12:50", "11:50 am to 12:50 pm", "Big Data Analytics Theory", "SS", "CR 301", "All", "REGULAR"));
     }
 
+    public static void updateFacultiesAndUsers(AppDatabase db) {
+        List<FacultyEntity> faculties = getMasterFaculties();
+        db.facultyDao().insertAll(faculties);
+        List<ClassEntity> classes = db.classDao().getAllClassesSync();
+        seedUsersInternal(db, faculties, classes);
+    }
+
+    public static List<FacultyEntity> getMasterFaculties() {
+        List<FacultyEntity> faculties = new ArrayList<>();
+        faculties.add(new FacultyEntity("NA", "Dr. Nidhhi Asthana", "Associate Professor & TT Coordinator", "Computer Engineering", "nidhhi.asthana@nmims.edu"));
+        faculties.add(new FacultyEntity("AR", "Dr. Ankur Ratmele", "Associate Professor & TT Coordinator", "Computer Engineering", "ankur.ratmele@nmims.edu"));
+        faculties.add(new FacultyEntity("VJ", "Dr. Vikas Jain", "Associate Professor & TT Coordinator", "Computer Engineering", "vikas.jain@nmims.edu"));
+        faculties.add(new FacultyEntity("VK", "Dr. Vikas Khare", "Associate Dean and Professor", "STME NMIMS", "vikas.khare@nmims.edu"));
+        faculties.add(new FacultyEntity("JG", "Dr. Jyoti Gautam", "Assistant Professor", "Computer Engineering", "jyoti.gautam@nmims.edu"));
+        faculties.add(new FacultyEntity("SS", "Dr. Shruti Sharma", "Assistant Professor", "Computer Engineering", "shruti.sharma@nmims.edu"));
+        faculties.add(new FacultyEntity("JP", "Dr. Jitendra Patel", "Assistant Professor", "Management & Humanities", "jitendra.patel@nmims.edu"));
+        faculties.add(new FacultyEntity("MJ", "Dr. Munendra Jain", "Assistant Professor", "Applied Sciences / Physics", "munendra.jain@nmims.edu"));
+        faculties.add(new FacultyEntity("PS", "Dr. Pushpanjay Singh", "Assistant Professor", "Mechanical Engineering", "pushpanjay.singh@nmims.edu"));
+        faculties.add(new FacultyEntity("AC", "Anita Chalka", "Assistant Professor", "Humanities / English", "anita.chalka@nmims.edu"));
+        faculties.add(new FacultyEntity("SV", "Dr. Suman Verma", "Assistant Professor", "Life Sciences / EVS", "suman.verma@nmims.edu"));
+        faculties.add(new FacultyEntity("HG", "Dr. Hemant Gianey", "Assistant Professor", "Computer Engineering", "hemant.gianey@nmims.edu"));
+        faculties.add(new FacultyEntity("DG", "Dr. Divya Gautam", "Assistant Professor", "Computer Engineering", "divya.gautam@nmims.edu"));
+        faculties.add(new FacultyEntity("NiG", "Prof. Nidhi Gour", "Assistant Professor", "Computer Engineering", "nidhi.gour@nmims.edu"));
+        faculties.add(new FacultyEntity("DS", "Dr. Dharmendra Sharma", "Assistant Professor", "Computer Engineering", "dharmendra.sharma@nmims.edu"));
+        faculties.add(new FacultyEntity("RD", "Dr. Ritesh Dhanare", "Assistant Professor", "Computer Engineering", "ritesh.dhanare@nmims.edu"));
+        faculties.add(new FacultyEntity("SO", "Prof. S. Oberoi", "Assistant Professor", "Electrical Engineering", "s.oberoi@nmims.edu"));
+        faculties.add(new FacultyEntity("AP", "Prof. Aniket Patil", "Assistant Professor", "Electrical & Electronics", "aniket.patil@nmims.edu"));
+        faculties.add(new FacultyEntity("RR", "Prof. R. Rathore", "Assistant Professor", "Design Engineering", "r.rathore@nmims.edu"));
+        faculties.add(new FacultyEntity("PST", "Dr. Praveen Singh Thakur", "Assistant Professor", "Computer Engineering", "praveen.thakur@nmims.edu"));
+        faculties.add(new FacultyEntity("PM", "Prof. P. Mishra", "Assistant Professor", "Data Science", "p.mishra@nmims.edu"));
+        faculties.add(new FacultyEntity("KJ", "Prof. K. Joshi", "Assistant Professor", "Data Science", "k.joshi@nmims.edu"));
+        faculties.add(new FacultyEntity("RGM", "Dr. Raj Gaurav Mishra", "Assistant Professor", "Computer Engineering", "rajgaurav.mishra@nmims.edu"));
+        faculties.add(new FacultyEntity("GP", "Dr. Gauarv Paliwal", "Assistant Professor", "Computer Engineering", "gaurav.paliwal@nmims.edu"));
+        faculties.add(new FacultyEntity("MB", "Prof. M. Bhalerao", "Assistant Professor", "Management Studies", "m.bhalerao@nmims.edu"));
+        faculties.add(new FacultyEntity("SJ", "Prof. S. Jain", "Assistant Professor", "Computer Engineering", "s.jain@nmims.edu"));
+        faculties.add(new FacultyEntity("ADS", "Dr. Ankur Ratmele & Dr. Vikas Jain", "Associate Professors", "Computer Engineering", "tt.admin@nmims.edu"));
+        faculties.add(new FacultyEntity("NG", "Dr. Neelam Gupta", "Associate Professor", "Mathematics", "neelam.gupta@nmims.edu"));
+        faculties.add(new FacultyEntity("AS", "Dr. Ankur Sharma", "Assistant Professor", "Statistics & Mathematics", "ankur.sharma@nmims.edu"));
+        faculties.add(new FacultyEntity("MG", "Dr. Mahipal Gadhavi", "Assistant Professor", "Humanities / Management", "mahipal.gadhavi@nmims.edu"));
+        faculties.add(new FacultyEntity("SG", "Prof. S. Gupta", "Assistant Professor", "Computer Engineering", "s.gupta@nmims.edu"));
+        faculties.add(new FacultyEntity("AM", "Prof. A. Mishra", "Assistant Professor", "Applied Sciences", "a.mishra@nmims.edu"));
+        faculties.add(new FacultyEntity("CP", "Chintan Patel", "Assistant Professor", "Computer Engineering", "chintan.patel@nmims.edu"));
+        return faculties;
+    }
+
     public static void seedUsersOnly(AppDatabase db) {
-        List<FacultyEntity> faculties = db.facultyDao().getAllFacultiesSync();
+        List<FacultyEntity> faculties = getMasterFaculties();
         List<ClassEntity> classes = db.classDao().getAllClassesSync();
         seedUsersInternal(db, faculties, classes);
     }
 
     private static void seedUsersInternal(AppDatabase db, List<FacultyEntity> faculties, List<ClassEntity> classes) {
+        db.userDao().deleteAllFacultyUsers();
         List<UserEntity> users = new ArrayList<>();
 
         // 1. Institutional Administration Accounts
