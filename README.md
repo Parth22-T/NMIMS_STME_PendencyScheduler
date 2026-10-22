@@ -105,6 +105,41 @@ This application provides:
 
 ---
 
+## 🔐 Pre-Seeded Login Credentials (Admin, Faculty, CRs)
+
+The app features a secure Login Portal with session management, role enforcement, and **1-Tap Quick Demo Autofill**:
+
+### 🏛️ 1. Administration Department Accounts
+| Role | Display Name | Official Email | Password |
+|------|--------------|----------------|----------|
+| **Admin** | STME Academic Administration | `admin.stme@nmims.edu` | `Admin@STME2026` |
+| **Admin** | Central Attendance Monitoring Cell | `attendance.stme@nmims.edu` | `Attendance@2026` |
+| **Admin** | Dr. Anshuman Jaswal (Director) | `director.stme@nmims.edu` | `Director@2026` |
+
+### 👨‍🏫 2. Faculty Accounts (Sample Featured Faculty)
+| Faculty Code | Faculty Name & Designation | Official Email | Password |
+|--------------|----------------------------|----------------|----------|
+| **VK** | Dr. Vikas Khare (Associate Dean & Prof) | `vikas.khare@nmims.edu` | `Faculty@VK2026` |
+| **NA** | Dr. Nidhhi Asthana (Assoc Prof & TT Coord) | `nidhhi.asthana@nmims.edu` | `Faculty@NA2026` |
+| **MJ** | Mr. Lokesh Gupta (Asst Prof, Physics) | `lokesh.gupta@nmims.edu` | `Faculty@MJ2026` |
+| **VJ** | Dr. Vikas Jain (Assoc Prof & TT Coord) | `vikas.jain@nmims.edu` | `Faculty@VJ2026` |
+| **AR** | Dr. Ankur Ratmele (Assoc Prof & TT Coord) | `ankur.ratmele@nmims.edu` | `Faculty@AR2026` |
+*(All 33 faculty codes from the official timetable are seeded with pattern: `Faculty@<CODE>2026`)*
+
+### 🎓 3. Class Representatives (2 Appointed CRs Per Class)
+| Class | Appointed CR Name | Official Email | Password |
+|-------|-------------------|----------------|----------|
+| **B.Tech. CE SEC A SEM I** | Aarav Sharma | `aarav.sharma@nmims.edu` | `CR@CES1A` |
+| **B.Tech. CE SEC A SEM I** | Diya Patel | `diya.patel@nmims.edu` | `CR@CES1A` |
+| **B.Tech. AIDS SEM I SEC A** | Kabir Singh | `kabir.singh@nmims.edu` | `CR@AIDSS1A` |
+| **B.Tech. AIDS SEM I SEC A** | Riya Mehra | `riya.mehra@nmims.edu` | `CR@AIDSS1A` |
+| **B.Tech. CE SEC A SEM V** | Yash Malhotra | `yash.malhotra@nmims.edu` | `CR@CES5A` |
+| **B.Tech. CE SEC A SEM V** | Kritika Saxena | `kritika.saxena@nmims.edu` | `CR@CES5A` |
+| **MBA.Tech. CE SEM I** | Siddharth Jain | `siddharth.jain@nmims.edu` | `CR@CES12026` |
+*(All 18 class sections supported with both appointed CR accounts)*
+
+---
+
 ## 📅 Pre-Loaded Timetable & Quota Database (AY 2026-27)
 
 Pre-seeded with **247 master slots** and **132 curriculum courses** from the official NMIMS Indore STME timetable effective 31.08.2026:

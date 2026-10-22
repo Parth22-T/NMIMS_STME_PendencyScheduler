@@ -17,7 +17,11 @@ import com.google.android.material.tabs.TabLayout;
 import com.nmims.stme.pendency.R;
 import com.nmims.stme.pendency.data.AppDatabase;
 import com.nmims.stme.pendency.data.entity.ClassEntity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import com.nmims.stme.pendency.auth.SessionManager;
 import com.nmims.stme.pendency.data.entity.FacultyEntity;
+import com.nmims.stme.pendency.data.entity.UserEntity;
 import com.nmims.stme.pendency.sync.NetworkSyncManager;
 import com.nmims.stme.pendency.ui.admin.AdminDashboardFragment;
 import com.nmims.stme.pendency.ui.cr.CrDashboardFragment;
@@ -30,9 +34,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private MainViewModel viewModel;
+    private SessionManager sessionManager;
+    private UserEntity currentUser;
 
-    private TextView tvActiveRoleBadge, tvSelectorLabel;
-    private View btnSyncStatus, viewSyncDot;
+    private TextView tvActiveRoleBadge, tvSelectorLabel, tvUserSessionInfo;
+    private View btnSyncStatus, viewSyncDot, btnLogout;
     private TextView tvSyncStatusLabel;
     private MaterialButtonToggleGroup roleToggleGroup;
     private LinearLayout layoutContextSelector;
@@ -47,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sessionManager = SessionManager.getInstance(this);
+        if (!sessionManager.isLoggedIn() || sessionManager.getCurrentUser() == null) {
+            launchLogin();
+            return;
+        }
+        currentUser = sessionManager.getCurrentUser();
+
         setContentView(R.layout.activity_main);
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -60,13 +74,25 @@ public class MainActivity extends AppCompatActivity {
         observeMetadata();
         observeSyncState();
 
+        // Apply initial user role session
+        applyUserSessionRole();
+
         // Ensure default fragment is rendered immediately
         displayFragmentForCurrentTab();
+    }
+
+    private void launchLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void initViews() {
         tvActiveRoleBadge = findViewById(R.id.tv_active_role_badge);
         tvSelectorLabel = findViewById(R.id.tv_selector_label);
+        tvUserSessionInfo = findViewById(R.id.tv_user_session_info);
+        btnLogout = findViewById(R.id.btn_logout);
         btnSyncStatus = findViewById(R.id.btn_sync_status);
         viewSyncDot = findViewById(R.id.view_sync_indicator_dot);
         tvSyncStatusLabel = findViewById(R.id.tv_sync_status_label);
@@ -75,9 +101,50 @@ public class MainActivity extends AppCompatActivity {
         spinnerContext = findViewById(R.id.spinner_context);
         tabLayout = findViewById(R.id.tab_layout);
 
+        if (currentUser != null && tvUserSessionInfo != null) {
+            tvUserSessionInfo.setText("👤 " + currentUser.getDisplayName() + " (" + currentUser.getRoleName() + ")");
+        }
+
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(v -> confirmLogout());
+        }
+
         btnSyncStatus.setOnClickListener(v -> {
             new ServerSettingsDialog(MainActivity.this, viewModel.getRepository().getSyncManager()).show();
         });
+    }
+
+    private void confirmLogout() {
+        new AlertDialog.Builder(this)
+                .setTitle("Sign Out")
+                .setMessage("Are you sure you want to sign out of NMIMS Academic Scheduler?")
+                .setPositiveButton("Sign Out", (dialog, which) -> {
+                    sessionManager.logout();
+                    launchLogin();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void applyUserSessionRole() {
+        if (currentUser == null) return;
+
+        if (currentUser.getRole() == 2) {
+            // Admin role
+            roleToggleGroup.check(R.id.btn_role_admin);
+        } else if (currentUser.getRole() == 1) {
+            // Faculty role
+            roleToggleGroup.check(R.id.btn_role_faculty);
+            if (currentUser.getAssociatedFacultyCode() != null) {
+                viewModel.setSelectedFacultyCode(currentUser.getAssociatedFacultyCode());
+            }
+        } else {
+            // CR role
+            roleToggleGroup.check(R.id.btn_role_cr);
+            if (currentUser.getAssociatedClassId() != null) {
+                viewModel.setSelectedClassId(currentUser.getAssociatedClassId());
+            }
+        }
     }
 
     private void observeSyncState() {
@@ -129,11 +196,22 @@ public class MainActivity extends AppCompatActivity {
                 tvActiveRoleBadge.setBackgroundResource(R.drawable.bg_badge_faculty_approved);
                 updateSelectorForCr();
             } else if (checkedId == R.id.btn_role_faculty) {
+                if (currentUser != null && currentUser.getRole() == 0) {
+                    android.widget.Toast.makeText(this, "Access restricted: Faculty authorization required.", android.widget.Toast.LENGTH_SHORT).show();
+                    roleToggleGroup.check(R.id.btn_role_cr);
+                    return;
+                }
                 activeRoleIndex = 1;
                 tvActiveRoleBadge.setText("ROLE: FACULTY");
                 tvActiveRoleBadge.setBackgroundResource(R.drawable.bg_badge_holiday);
                 updateSelectorForFaculty();
             } else if (checkedId == R.id.btn_role_admin) {
+                if (currentUser != null && currentUser.getRole() < 2) {
+                    android.widget.Toast.makeText(this, "Access restricted: STME Admin clearance required.", android.widget.Toast.LENGTH_SHORT).show();
+                    if (currentUser.getRole() == 1) roleToggleGroup.check(R.id.btn_role_faculty);
+                    else roleToggleGroup.check(R.id.btn_role_cr);
+                    return;
+                }
                 activeRoleIndex = 2;
                 tvActiveRoleBadge.setText("ROLE: ADMIN DEPT");
                 tvActiveRoleBadge.setBackgroundResource(R.drawable.bg_badge_admin_approved);
@@ -142,9 +220,6 @@ public class MainActivity extends AppCompatActivity {
             viewModel.setCurrentRole(activeRoleIndex);
             displayFragmentForCurrentTab();
         });
-
-        // Trigger default selection after listener is attached
-        roleToggleGroup.check(R.id.btn_role_cr);
     }
 
     private void observeMetadata() {

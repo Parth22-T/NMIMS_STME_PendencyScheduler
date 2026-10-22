@@ -5,6 +5,7 @@ import com.nmims.stme.pendency.data.entity.FacultyEntity;
 import com.nmims.stme.pendency.data.entity.HolidayEntity;
 import com.nmims.stme.pendency.data.entity.SubjectEntity;
 import com.nmims.stme.pendency.data.entity.TimetableSlotEntity;
+import com.nmims.stme.pendency.data.entity.UserEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,9 @@ public class DatabaseInitializer {
 
     public static void seedDatabase(AppDatabase db) {
         if (db.classDao().getAllClassesSync().size() > 0) {
+            if (db.userDao().getUserCount() == 0) {
+                seedUsersOnly(db);
+            }
             return; // Already initialized
         }
 
@@ -234,6 +238,9 @@ public class DatabaseInitializer {
         holidays.add(new HolidayEntity("2027-03-26", "Good Friday", "Fri", "Gazetted Holiday", false));
         holidays.add(new HolidayEntity("2027-04-14", "Dr. B. R. Ambedkar Jayanti", "Wed", "National Holiday", false));
         db.holidayDao().insertAll(holidays);
+
+        // 6. Seed All Users (Admin, 33 Faculty, 36 Class Representatives)
+        seedUsersInternal(db, faculties, classes);
     }
 
     private static void seedAllTimetableSlots(List<TimetableSlotEntity> slots) {
@@ -484,5 +491,69 @@ public class DatabaseInitializer {
         slots.add(new TimetableSlotEntity("BTECH_AIDS_S7", "Thurs", "09:00", "10:00", "9:00 am to 10:00 am", "Turning Data into Story Theory", "KJ", "CR 301", "All", "REGULAR"));
         slots.add(new TimetableSlotEntity("BTECH_AIDS_S7", "Thurs", "10:00", "11:00", "10:00 am to 11:00 am", "Turning Data into Story Theory", "KJ", "CR 301", "All", "REGULAR"));
         slots.add(new TimetableSlotEntity("BTECH_AIDS_S7", "Thurs", "11:50", "12:50", "11:50 am to 12:50 pm", "Big Data Analytics Theory", "SS", "CR 301", "All", "REGULAR"));
+    }
+
+    public static void seedUsersOnly(AppDatabase db) {
+        List<FacultyEntity> faculties = db.facultyDao().getAllFacultiesSync();
+        List<ClassEntity> classes = db.classDao().getAllClassesSync();
+        seedUsersInternal(db, faculties, classes);
+    }
+
+    private static void seedUsersInternal(AppDatabase db, List<FacultyEntity> faculties, List<ClassEntity> classes) {
+        List<UserEntity> users = new ArrayList<>();
+
+        // 1. Institutional Administration Accounts
+        users.add(new UserEntity("admin.stme@nmims.edu", "Admin@STME2026", 2, "STME Academic Administration", null, null, "Administration", "EMP-ADMIN-01"));
+        users.add(new UserEntity("attendance.stme@nmims.edu", "Attendance@2026", 2, "Central Attendance Monitoring Cell", null, null, "Academic Operations", "EMP-ADMIN-02"));
+        users.add(new UserEntity("director.stme@nmims.edu", "Director@2026", 2, "Dr. Anshuman Jaswal (Director)", null, null, "Director's Office", "EMP-DIR-01"));
+
+        // 2. Faculty Accounts (All faculties)
+        for (FacultyEntity f : faculties) {
+            String pwd = "Faculty@" + f.getFacultyCode() + "2026";
+            users.add(new UserEntity(
+                    f.getEmail(),
+                    pwd,
+                    1,
+                    f.getName(),
+                    null,
+                    f.getFacultyCode(),
+                    f.getDepartment(),
+                    "FAC-" + f.getFacultyCode()
+            ));
+        }
+
+        // 3. Class Representative Accounts (2 CRs per class across all 18 classes)
+        for (ClassEntity c : classes) {
+            if (c.getCrNames() != null) {
+                String[] crs = c.getCrNames().split("&");
+                int idx = 1;
+                for (String crName : crs) {
+                    String cleanName = crName.trim();
+                    String emailPrefix = cleanName.toLowerCase().replaceAll("[^a-z0-9]", ".");
+                    while (emailPrefix.contains("..")) emailPrefix = emailPrefix.replace("..", ".");
+                    if (emailPrefix.endsWith(".")) emailPrefix = emailPrefix.substring(0, emailPrefix.length() - 1);
+                    String email = emailPrefix + "@nmims.edu";
+                    String classSuffix = c.getClassId().replace("BTECH_", "").replace("MBATECH_", "").replace("_", "");
+                    String pwd = "CR@" + classSuffix + "2026";
+                    if (c.getClassId().equals("BTECH_CE_S1_A")) pwd = "CR@CES1A";
+                    if (c.getClassId().equals("BTECH_AIDS_S1_A")) pwd = "CR@AIDSS1A";
+                    if (c.getClassId().equals("BTECH_CE_S5_A")) pwd = "CR@CES5A";
+
+                    users.add(new UserEntity(
+                            email,
+                            pwd,
+                            0,
+                            cleanName + " (CR)",
+                            c.getClassId(),
+                            null,
+                            c.getDepartment(),
+                            "CR-" + c.getClassId() + "-" + idx
+                    ));
+                    idx++;
+                }
+            }
+        }
+
+        db.userDao().insertAll(users);
     }
 }

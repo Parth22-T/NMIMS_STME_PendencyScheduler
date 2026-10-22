@@ -120,27 +120,30 @@ The application supports simultaneous multi-user collaboration across phones on 
 
 ## 🧪 Testing the Complete Workflow
 
-To verify the three-tier workflow on your device:
+To verify the three-tier workflow with authentication on your device:
 
-1. **Class Representative (CR)**:
-   - Select `ROLE: CLASS REP (CR)`.
-   - Select active class: `B.Tech. CE SEC A SEM I`.
+1. **Sign In as Class Representative (CR)**:
+   - On the Login Screen, tap **`CR (CE S1 A)`** under *1-Tap Quick Demo Credentials* (or type `aarav.sharma@nmims.edu` / `CR@CES1A`).
+   - Tap **Sign In to Academic Scheduler**.
+   - Notice the header shows: `👤 Aarav Sharma (CR) (Class Representative)`.
    - Tap `Reschedule Lecture` (+).
    - Select subject `Calculus Theory`.
    - Tap `⚡ Auto-Suggest Best Available Free Slot` &rarr; picks clash-free time and room.
    - Tap `Submit Reschedule Request to Faculty`.
+   - Tap **Sign Out** in the top header.
 
-2. **Faculty**:
-   - Switch role to `ROLE: FACULTY`.
-   - Select Faculty `NA (Faculty NA)`.
-   - View `Incoming Reschedule Requests (1 Awaiting You)`.
-   - Tap `APPROVE & FORWARD`.
+2. **Sign In as Faculty (Dr. Vikas Khare)**:
+   - On the Login Screen, tap **`DR. VIKAS KHARE`** (or type `vikas.khare@nmims.edu` / `Faculty@VK2026`).
+   - Tap **Sign In to Academic Scheduler**.
+   - Notice the header shows: `👤 Dr. Vikas Khare (Faculty Member)`.
+   - View your courses, weekly teaching timetable, or tap `📅 Intimate Planned Absence / Leave`.
+   - Tap **Sign Out**.
 
-3. **Administration Department**:
-   - Switch role to `ROLE: ADMIN DEPT`.
-   - View `Final Admin Approval Queue`.
-   - Tap `Grant Final Admin Approval` &rarr; `AUTHORIZE & SCHEDULE`.
-   - Switch to the **Timetable Tab** &rarr; Verify the rescheduled slot is locked into Friday 2:10 PM in `CR 302` with a green `[ Rescheduled ]` tag!
+3. **Sign In as Administration Department (Admin)**:
+   - On the Login Screen, tap **`ADMIN OFFICE`** (or type `admin.stme@nmims.edu` / `Admin@STME2026`).
+   - Tap **Sign In to Academic Scheduler**.
+   - Notice the header shows: `👤 STME Academic Administration (Admin Dept)`.
+   - View `Final Admin Approval Queue`, approve/reject requests with institutional remarks, or monitor syllabus compliance in the **Analytics Tab**.
 
 4. **Faculty Leave Conflict Check**:
    - Under Faculty role, tap `📅 Intimate Planned Absence / Leave`.

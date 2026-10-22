@@ -13,6 +13,7 @@ import com.nmims.stme.pendency.data.dao.HolidayDao;
 import com.nmims.stme.pendency.data.dao.RequestDao;
 import com.nmims.stme.pendency.data.dao.SubjectDao;
 import com.nmims.stme.pendency.data.dao.TimetableDao;
+import com.nmims.stme.pendency.data.dao.UserDao;
 import com.nmims.stme.pendency.data.entity.ClassEntity;
 import com.nmims.stme.pendency.data.entity.FacultyEntity;
 import com.nmims.stme.pendency.data.entity.FacultyLeaveEntity;
@@ -20,6 +21,7 @@ import com.nmims.stme.pendency.data.entity.HolidayEntity;
 import com.nmims.stme.pendency.data.entity.PendencyRequestEntity;
 import com.nmims.stme.pendency.data.entity.SubjectEntity;
 import com.nmims.stme.pendency.data.entity.TimetableSlotEntity;
+import com.nmims.stme.pendency.data.entity.UserEntity;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,8 +33,9 @@ import java.util.concurrent.Executors;
         TimetableSlotEntity.class,
         HolidayEntity.class,
         PendencyRequestEntity.class,
-        FacultyLeaveEntity.class
-}, version = 5, exportSchema = false)
+        FacultyLeaveEntity.class,
+        UserEntity.class
+}, version = 6, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract ClassDao classDao();
@@ -42,6 +45,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract HolidayDao holidayDao();
     public abstract RequestDao requestDao();
     public abstract FacultyLeaveDao facultyLeaveDao();
+    public abstract UserDao userDao();
 
     private static volatile AppDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;

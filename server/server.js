@@ -246,6 +246,28 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    // 8. Auth Credentials Reference Sheet
+    if (pathname === '/api/auth/credentials' && req.method === 'GET') {
+        sendJson(res, 200, {
+            adminAccounts: [
+                { email: "admin.stme@nmims.edu", role: "ADMIN", name: "STME Academic Administration", pass: "Admin@STME2026" },
+                { email: "attendance.stme@nmims.edu", role: "ADMIN", name: "Central Attendance Monitoring Cell", pass: "Attendance@2026" },
+                { email: "director.stme@nmims.edu", role: "ADMIN", name: "Dr. Anshuman Jaswal (Director)", pass: "Director@2026" }
+            ],
+            featuredFaculty: [
+                { email: "vikas.khare@nmims.edu", code: "VK", role: "FACULTY", name: "Dr. Vikas Khare (Associate Dean)", pass: "Faculty@VK2026" },
+                { email: "nidhhi.asthana@nmims.edu", code: "NA", role: "FACULTY", name: "Dr. Nidhhi Asthana", pass: "Faculty@NA2026" },
+                { email: "lokesh.gupta@nmims.edu", code: "MJ", role: "FACULTY", name: "Mr. Lokesh Gupta", pass: "Faculty@MJ2026" }
+            ],
+            featuredCRs: [
+                { email: "aarav.sharma@nmims.edu", classId: "BTECH_CE_S1_A", role: "CR", name: "Aarav Sharma", pass: "CR@CES1A" },
+                { email: "kabir.singh@nmims.edu", classId: "BTECH_AIDS_S1_A", role: "CR", name: "Kabir Singh", pass: "CR@AIDSS1A" },
+                { email: "yash.malhotra@nmims.edu", classId: "BTECH_CE_S5_A", role: "CR", name: "Yash Malhotra", pass: "CR@CES5A" }
+            ]
+        });
+        return;
+    }
+
     // Default 404
     sendJson(res, 404, { error: 'Endpoint not found', path: pathname });
 });
