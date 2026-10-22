@@ -1,0 +1,90 @@
+{
+  "serverStartTime": 1792644401036,
+  "requests": [
+    {
+      "syncId": "REQ-DEV2-1792646759108",
+      "classId": "BTECH_AIDS_S1_A",
+      "className": "B.Tech. AIDS SEM I SEC A",
+      "subjectName": "Physics Theory",
+      "facultyCode": "MJ",
+      "facultyName": "Mr. Lokesh Gupta",
+      "schedulingType": "COMPENSATORY",
+      "reason": "Faculty Medical Emergency",
+      "originalDate": "2026-10-21",
+      "originalTimeSlot": "10:00 am to 11:00 am",
+      "proposedDate": "2026-10-24",
+      "proposedTimeSlot": "11:10 am to 12:10 pm",
+      "proposedRoom": "CR 304",
+      "status": "ADMIN_REJECTED",
+      "crNotes": "[CR: Kabir Singh] Urgent makeup lecture before assessment test",
+      "facultyRemarks": "Approved by MJ. Ready for STME Admin room lock.",
+      "adminRemarks": "Rejected due to institutional exam/room conflict.",
+      "timestampCreated": 1792646759108,
+      "timestampFacultyAction": 1792646759118,
+      "timestampAdminAction": 1792647339878
+    },
+    {
+      "adminRemarks": "Authorized by STME Academic Office. Timetable locked.",
+      "classId": "BTECH_CE_S1_A",
+      "className": "For B.Tech. CE SEC A SEM I (Room CR 302)",
+      "crNotes": "[CR: Aarav Sharma] ",
+      "facultyCode": "NA",
+      "facultyName": "Faculty NA",
+      "facultyRemarks": "Approved by Faculty NA. Slot verified.",
+      "originalDate": "2026-10-22",
+      "originalTimeSlot": "9:00 am to 10:00 am",
+      "proposedDate": "2026-10-23",
+      "proposedRoom": "CR 302",
+      "proposedTimeSlot": "3:10 pm to 4:10 pm",
+      "reason": "National Holiday / Gazetted Break",
+      "requestId": 0,
+      "schedulingType": "PRE_SCHEDULED",
+      "status": "ADMIN_APPROVED",
+      "subjectName": "Calculus Theory",
+      "syncId": "REQ-9475bb5e-8e34-40b1-b881-c4c9526d38cd",
+      "timestampAdminAction": 1792646339743,
+      "timestampCreated": 1792645531992,
+      "timestampFacultyAction": 1792646022783
+    }
+  ],
+  "timetableSlots": [
+    {
+      "batch": "All",
+      "classId": "BTECH_CE_S1_A",
+      "dayOfWeek": "Fri",
+      "endTime": "4:10 pm",
+      "facultyCode": "NA",
+      "roomLab": "CR 302",
+      "slotId": 0,
+      "slotType": "RESCHEDULED",
+      "startTime": "3:10 pm",
+      "subjectName": "Calculus Theory (Rescheduled)",
+      "syncId": "SLOT-fcb22cdc-6810-4cb4-a89b-292055e8068c",
+      "timeDisplay": "3:10 pm to 4:10 pm",
+      "timestamp": 1792646340505
+    }
+  ],
+  "facultyLeaves": [
+    {
+      "leaveId": "LEAVE-DEV2-1792646759120",
+      "syncId": "LEAVE-DEV2-1792646759120",
+      "facultyCode": "VK",
+      "facultyName": "Dr. Vikas Khare",
+      "leaveDate": "2026-10-27",
+      "dayOfWeek": "Tues",
+      "reason": "Academic Council Meeting at NMIMS Mumbai HQ",
+      "status": "NOTIFIED_TO_CRS",
+      "affectedClassesCount": 3,
+      "timestamp": 1792646759120
+    }
+  ],
+  "subjectUpdates": [
+    {
+      "classId": "BTECH_CE_S1_A",
+      "subjectName": "Calculus Theory",
+      "scheduledLectures": 1,
+      "pendingLectures": 0,
+      "timestamp": 1792646340505
+    }
+  ]
+}

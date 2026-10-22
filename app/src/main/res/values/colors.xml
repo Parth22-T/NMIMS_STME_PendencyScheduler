@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- NMIMS STME Official Academic Palette -->
+    <color name="primary_navy">#0B2545</color>
+    <color name="primary_navy_dark">#061527</color>
+    <color name="primary_navy_light">#1D406E</color>
+    
+    <color name="accent_crimson">#A51C30</color>
+    <color name="accent_gold">#D4AF37</color>
+    
+    <color name="bg_light">#F5F7FA</color>
+    <color name="surface_white">#FFFFFF</color>
+    
+    <!-- Status Colors -->
+    <color name="status_pending">#F57C00</color>
+    <color name="status_faculty_approved">#1976D2</color>
+    <color name="status_admin_approved">#2E7D32</color>
+    <color name="status_rejected">#C62828</color>
+    <color name="status_holiday">#6A1B9A</color>
+
+    <color name="text_primary">#1C2536</color>
+    <color name="text_secondary">#637381</color>
+    <color name="text_muted">#919EAB</color>
+    
+    <color name="card_stroke">#DFE3E8</color>
+    <color name="chip_bg">#EDF2F7</color>
+</resources>

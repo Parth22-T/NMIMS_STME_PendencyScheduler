@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">STME Pendency Scheduler</string>
+    <string name="institution_title">NMIMS INDORE</string>
+    <string name="school_subtitle">School of Technology Management &amp; Engineering</string>
+    <string name="ay_indicator">Academic Year 2026–27 | wef 31.08.2026</string>
+    
+    <!-- Roles -->
+    <string name="role_cr">Class Representative (CR)</string>
+    <string name="role_faculty">Faculty Member</string>
+    <string name="role_admin">Administration Dept.</string>
+
+    <!-- Navigation / Tabs -->
+    <string name="tab_dashboard">Dashboard</string>
+    <string name="tab_requests">Pendency Requests</string>
+    <string name="tab_timetable">Timetable</string>
+    <string name="tab_analytics">Analytics</string>
+    <string name="tab_holidays">Holidays</string>
+
+    <!-- Actions -->
+    <string name="action_new_request">New Reschedule Request</string>
+    <string name="action_preschedule">Pre-schedule Holiday</string>
+    <string name="action_approve">Approve</string>
+    <string name="action_reject">Reject</string>
+    <string name="action_final_approve">Final Admin Approval</string>
+    <string name="action_check_conflict">Validate Conflict</string>
+</resources>
