@@ -40,17 +40,17 @@ import okhttp3.Response;
  */
 public class NetworkSyncManager {
 
-    private static final String TAG = "NetworkSync";
-    private static final String PREF_NAME = "nmims_sync_prefs";
-    private static final String KEY_SERVER_URL = "server_url";
-    private static final String KEY_HOST_MODE = "is_host_mode";
-    public static final String DEFAULT_EMULATOR_URL = "http://10.0.2.2:8080";
-
     public enum SyncState {
         CONNECTED,
         CONNECTING,
         OFFLINE
     }
+
+    private static final String TAG = "NetworkSync";
+    private static final String PREF_NAME = "nmims_sync_prefs";
+    private static final String KEY_SERVER_URL = "server_url";
+    private static final String KEY_HOST_MODE = "is_host_mode";
+    public static final String DEFAULT_EMULATOR_URL = "http://10.0.2.2:8080";
 
     private static volatile NetworkSyncManager INSTANCE;
     private final Context context;
@@ -61,7 +61,7 @@ public class NetworkSyncManager {
     private final ExecutorService syncExecutor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private final MutableLiveData<SyncState> syncStateLive = new MutableLiveData<>(SyncState.OFFLINE);
+    private final MutableLiveData<SyncState> syncStateLive = new MutableLiveData<SyncState>(SyncState.OFFLINE);
     private final MutableLiveData<String> lastSyncMessageLive = new MutableLiveData<>("Local database initialized");
     private final MutableLiveData<Long> lastSyncTimeLive = new MutableLiveData<>(0L);
 

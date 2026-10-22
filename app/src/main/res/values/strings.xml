@@ -24,4 +24,21 @@
     <string name="action_reject">Reject</string>
     <string name="action_final_approve">Final Admin Approval</string>
     <string name="action_check_conflict">Validate Conflict</string>
+
+    <!-- Main Activity Strings -->
+    <string name="user_session_format">👤 %1$s (%2$s)</string>
+    <string name="sync_status_linked">LINKED</string>
+    <string name="sync_status_syncing">SYNCING</string>
+    <string name="sync_status_offline">OFFLINE</string>
+    <string name="role_cr_badge">ROLE: CLASS REP (CR)</string>
+    <string name="role_faculty_badge">ROLE: FACULTY</string>
+    <string name="role_admin_badge">ROLE: ADMIN DEPT</string>
+    <string name="active_class_label">Active Class:</string>
+    <string name="active_faculty_label">Active Faculty:</string>
+    <string name="sign_out_title">Sign Out</string>
+    <string name="sign_out_message">Are you sure you want to sign out of NMIMS Academic Scheduler?</string>
+    <string name="sign_out_confirm">Sign Out</string>
+    <string name="cancel">Cancel</string>
+    <string name="access_restricted_faculty">Access restricted: Faculty authorization required.</string>
+    <string name="access_restricted_admin">Access restricted: STME Admin clearance required.</string>
 </resources>

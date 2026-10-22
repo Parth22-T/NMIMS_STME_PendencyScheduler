@@ -8,6 +8,9 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.nmims.stme.pendency.data.entity.UserEntity;
 
+/**
+ * Session manager for persisting user login authentication state.
+ */
 public class SessionManager {
 
     private static final String PREF_NAME = "nmims_stme_auth_pref";

@@ -1,5 +1,7 @@
 package com.nmims.stme.pendency.ui;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -7,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -15,11 +18,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.nmims.stme.pendency.R;
+import com.nmims.stme.pendency.auth.SessionManager;
 import com.nmims.stme.pendency.data.AppDatabase;
 import com.nmims.stme.pendency.data.entity.ClassEntity;
-import android.app.AlertDialog;
-import android.content.Intent;
-import com.nmims.stme.pendency.auth.SessionManager;
 import com.nmims.stme.pendency.data.entity.FacultyEntity;
 import com.nmims.stme.pendency.data.entity.UserEntity;
 import com.nmims.stme.pendency.sync.NetworkSyncManager;
@@ -30,6 +31,7 @@ import com.nmims.stme.pendency.ui.timetable.TimetableViewFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,8 +39,10 @@ public class MainActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private UserEntity currentUser;
 
-    private TextView tvActiveRoleBadge, tvSelectorLabel, tvUserSessionInfo;
-    private View btnSyncStatus, viewSyncDot, btnLogout;
+    private TextView tvActiveRoleBadge;
+    private TextView tvSelectorLabel;
+    private View btnSyncStatus;
+    private View viewSyncDot;
     private TextView tvSyncStatusLabel;
     private MaterialButtonToggleGroup roleToggleGroup;
     private LinearLayout layoutContextSelector;
@@ -91,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         tvActiveRoleBadge = findViewById(R.id.tv_active_role_badge);
         tvSelectorLabel = findViewById(R.id.tv_selector_label);
-        tvUserSessionInfo = findViewById(R.id.tv_user_session_info);
-        btnLogout = findViewById(R.id.btn_logout);
+        TextView tvUserSessionInfo = findViewById(R.id.tv_user_session_info);
+        View btnLogout = findViewById(R.id.btn_logout);
         btnSyncStatus = findViewById(R.id.btn_sync_status);
         viewSyncDot = findViewById(R.id.view_sync_indicator_dot);
         tvSyncStatusLabel = findViewById(R.id.tv_sync_status_label);
@@ -102,47 +106,44 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.tab_layout);
 
         if (currentUser != null && tvUserSessionInfo != null) {
-            tvUserSessionInfo.setText("👤 " + currentUser.getDisplayName() + " (" + currentUser.getRoleName() + ")");
+            tvUserSessionInfo.setText(getString(R.string.user_session_format, currentUser.getDisplayName(), currentUser.getRoleName()));
         }
 
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> confirmLogout());
         }
 
-        btnSyncStatus.setOnClickListener(v -> {
-            new ServerSettingsDialog(MainActivity.this, viewModel.getRepository().getSyncManager()).show();
-        });
+        btnSyncStatus.setOnClickListener(v -> new ServerSettingsDialog(MainActivity.this, viewModel.getRepository().getSyncManager()).show());
     }
 
     private void confirmLogout() {
         new AlertDialog.Builder(this)
-                .setTitle("Sign Out")
-                .setMessage("Are you sure you want to sign out of NMIMS Academic Scheduler?")
-                .setPositiveButton("Sign Out", (dialog, which) -> {
+                .setTitle(R.string.sign_out_title)
+                .setMessage(R.string.sign_out_message)
+                .setPositiveButton(R.string.sign_out_confirm, (dialog, which) -> {
                     sessionManager.logout();
                     launchLogin();
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
     private void applyUserSessionRole() {
         if (currentUser == null) return;
 
-        if (currentUser.getRole() == 2) {
-            // Admin role
-            roleToggleGroup.check(R.id.btn_role_admin);
-        } else if (currentUser.getRole() == 1) {
-            // Faculty role
-            roleToggleGroup.check(R.id.btn_role_faculty);
-            if (currentUser.getAssociatedFacultyCode() != null) {
-                viewModel.setSelectedFacultyCode(currentUser.getAssociatedFacultyCode());
+        switch (currentUser.getRole()) {
+            case 2 -> roleToggleGroup.check(R.id.btn_role_admin);
+            case 1 -> {
+                roleToggleGroup.check(R.id.btn_role_faculty);
+                if (currentUser.getAssociatedFacultyCode() != null) {
+                    viewModel.setSelectedFacultyCode(currentUser.getAssociatedFacultyCode());
+                }
             }
-        } else {
-            // CR role
-            roleToggleGroup.check(R.id.btn_role_cr);
-            if (currentUser.getAssociatedClassId() != null) {
-                viewModel.setSelectedClassId(currentUser.getAssociatedClassId());
+            default -> {
+                roleToggleGroup.check(R.id.btn_role_cr);
+                if (currentUser.getAssociatedClassId() != null) {
+                    viewModel.setSelectedClassId(currentUser.getAssociatedClassId());
+                }
             }
         }
     }
@@ -151,25 +152,25 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getSyncState().observe(this, syncState -> {
             if (syncState == NetworkSyncManager.SyncState.CONNECTED) {
                 viewSyncDot.setBackgroundResource(R.drawable.bg_dot_online);
-                tvSyncStatusLabel.setText("LINKED");
+                tvSyncStatusLabel.setText(R.string.sync_status_linked);
                 btnSyncStatus.setBackgroundResource(R.drawable.bg_badge_admin_approved);
-            } else if (syncState == NetworkSyncManager.SyncState.CONNECTING) {
-                viewSyncDot.setBackgroundResource(R.drawable.bg_dot_offline);
-                tvSyncStatusLabel.setText("SYNCING");
-                btnSyncStatus.setBackgroundResource(R.drawable.bg_badge_pending);
             } else {
                 viewSyncDot.setBackgroundResource(R.drawable.bg_dot_offline);
-                tvSyncStatusLabel.setText("OFFLINE");
                 btnSyncStatus.setBackgroundResource(R.drawable.bg_badge_pending);
+                if (syncState == NetworkSyncManager.SyncState.CONNECTING) {
+                    tvSyncStatusLabel.setText(R.string.sync_status_syncing);
+                } else {
+                    tvSyncStatusLabel.setText(R.string.sync_status_offline);
+                }
             }
         });
     }
 
     private void setupTabs() {
-        tabLayout.addTab(tabLayout.newTab().setText("Dashboard"));
-        tabLayout.addTab(tabLayout.newTab().setText("Timetable"));
-        tabLayout.addTab(tabLayout.newTab().setText("Holiday Calendar"));
-        tabLayout.addTab(tabLayout.newTab().setText("Analytics"));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_dashboard));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_timetable));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_holidays));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_analytics));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -192,28 +193,31 @@ public class MainActivity extends AppCompatActivity {
 
             if (checkedId == R.id.btn_role_cr) {
                 activeRoleIndex = 0;
-                tvActiveRoleBadge.setText("ROLE: CLASS REP (CR)");
+                tvActiveRoleBadge.setText(R.string.role_cr_badge);
                 tvActiveRoleBadge.setBackgroundResource(R.drawable.bg_badge_faculty_approved);
                 updateSelectorForCr();
             } else if (checkedId == R.id.btn_role_faculty) {
                 if (currentUser != null && currentUser.getRole() == 0) {
-                    android.widget.Toast.makeText(this, "Access restricted: Faculty authorization required.", android.widget.Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.access_restricted_faculty, Toast.LENGTH_SHORT).show();
                     roleToggleGroup.check(R.id.btn_role_cr);
                     return;
                 }
                 activeRoleIndex = 1;
-                tvActiveRoleBadge.setText("ROLE: FACULTY");
+                tvActiveRoleBadge.setText(R.string.role_faculty_badge);
                 tvActiveRoleBadge.setBackgroundResource(R.drawable.bg_badge_holiday);
                 updateSelectorForFaculty();
             } else if (checkedId == R.id.btn_role_admin) {
                 if (currentUser != null && currentUser.getRole() < 2) {
-                    android.widget.Toast.makeText(this, "Access restricted: STME Admin clearance required.", android.widget.Toast.LENGTH_SHORT).show();
-                    if (currentUser.getRole() == 1) roleToggleGroup.check(R.id.btn_role_faculty);
-                    else roleToggleGroup.check(R.id.btn_role_cr);
+                    Toast.makeText(this, R.string.access_restricted_admin, Toast.LENGTH_SHORT).show();
+                    if (currentUser.getRole() == 1) {
+                        roleToggleGroup.check(R.id.btn_role_faculty);
+                    } else {
+                        roleToggleGroup.check(R.id.btn_role_cr);
+                    }
                     return;
                 }
                 activeRoleIndex = 2;
-                tvActiveRoleBadge.setText("ROLE: ADMIN DEPT");
+                tvActiveRoleBadge.setText(R.string.role_admin_badge);
                 tvActiveRoleBadge.setBackgroundResource(R.drawable.bg_badge_admin_approved);
                 updateSelectorForAdmin();
             }
@@ -226,38 +230,42 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getAllClasses().observe(this, classes -> {
             if (classes != null && !classes.isEmpty()) {
                 classList = classes;
-                if (activeRoleIndex == 0) updateSelectorForCr();
+                if (activeRoleIndex == 0) {
+                    updateSelectorForCr();
+                }
             }
         });
 
         viewModel.getAllFaculties().observe(this, faculties -> {
             if (faculties != null && !faculties.isEmpty()) {
                 facultyList = faculties;
-                if (activeRoleIndex == 1) updateSelectorForFaculty();
+                if (activeRoleIndex == 1) {
+                    updateSelectorForFaculty();
+                }
             }
         });
     }
 
     private void updateSelectorForCr() {
         layoutContextSelector.setVisibility(View.VISIBLE);
-        tvSelectorLabel.setText("Active Class:");
+        tvSelectorLabel.setText(R.string.active_class_label);
 
         List<String> displayNames = new ArrayList<>();
-        int selectedIndex = 0;
         String curClassId = viewModel.getSelectedClassId().getValue();
+        int initialSelection = 0;
 
         for (int i = 0; i < classList.size(); i++) {
             ClassEntity c = classList.get(i);
             displayNames.add(c.getDisplayName() + " (" + c.getDefaultRoom() + ")");
-            if (c.getClassId().equals(curClassId)) {
-                selectedIndex = i;
+            if (Objects.equals(c.getClassId(), curClassId)) {
+                initialSelection = i;
             }
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, displayNames);
         spinnerContext.setAdapter(adapter);
-        if (selectedIndex < displayNames.size()) {
-            spinnerContext.setSelection(selectedIndex);
+        if (initialSelection < displayNames.size()) {
+            spinnerContext.setSelection(initialSelection);
         }
 
         spinnerContext.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -274,24 +282,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateSelectorForFaculty() {
         layoutContextSelector.setVisibility(View.VISIBLE);
-        tvSelectorLabel.setText("Active Faculty:");
+        tvSelectorLabel.setText(R.string.active_faculty_label);
 
         List<String> facultyNames = new ArrayList<>();
-        int selectedIndex = 0;
         String curCode = viewModel.getSelectedFacultyCode().getValue();
+        int initialSelection = 0;
 
         for (int i = 0; i < facultyList.size(); i++) {
             FacultyEntity f = facultyList.get(i);
             facultyNames.add(f.getName() + " (" + f.getFacultyCode() + ")");
-            if (f.getFacultyCode().equals(curCode)) {
-                selectedIndex = i;
+            if (Objects.equals(f.getFacultyCode(), curCode)) {
+                initialSelection = i;
             }
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, facultyNames);
         spinnerContext.setAdapter(adapter);
-        if (selectedIndex < facultyNames.size()) {
-            spinnerContext.setSelection(selectedIndex);
+        if (initialSelection < facultyNames.size()) {
+            spinnerContext.setSelection(initialSelection);
         }
 
         spinnerContext.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

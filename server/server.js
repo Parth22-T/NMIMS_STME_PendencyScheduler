@@ -272,6 +272,22 @@ const server = http.createServer((req, res) => {
     sendJson(res, 404, { error: 'Endpoint not found', path: pathname });
 });
 
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.log('================================================================');
+        console.log(`  [NOTICE] Port ${PORT} is ALREADY IN USE!`);
+        console.log('  An instance of the NMIMS STME Sync Server is already active.');
+        console.log(`  Verify status in browser / terminal: http://localhost:${PORT}/api/status`);
+        console.log('  To stop the running server:');
+        console.log('    PowerShell: Stop-Process -Name node -Force');
+        console.log('    CMD:        taskkill /F /IM node.exe');
+        console.log('================================================================');
+        process.exit(0);
+    } else {
+        throw err;
+    }
+});
+
 server.listen(PORT, '0.0.0.0', () => {
     const ips = getLocalIpAddresses();
     console.log('================================================================');
